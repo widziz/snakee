@@ -259,15 +259,21 @@ window.addEventListener(
 let xDown = null;
 let yDown = null;
 
+// Инициализация обработчиков свайпов
+document.addEventListener('touchstart', handleTouchStart, false);
+document.addEventListener('touchmove', handleTouchMove, false);
+
 function handleTouchStart(evt) {
-  const firstTouch = evt.touches[0];
+  const firstTouch = evt.touches[0]; // Получаем первую точку касания
   xDown = firstTouch.clientX;
   yDown = firstTouch.clientY;
   console.log('Touch Start:', xDown, yDown);
 }
 
 function handleTouchMove(evt) {
-  if (!xDown || !yDown) return;
+  if (!xDown || !yDown) {
+    return;
+  }
 
   const xUp = evt.touches[0].clientX;
   const yUp = evt.touches[0].clientY;
@@ -280,21 +286,22 @@ function handleTouchMove(evt) {
   if (Math.abs(xDiff) > Math.abs(yDiff)) {
     if (xDiff > 0) {
       console.log('Swipe LEFT');
-      snake.set_vec(Snake.LEFT);
+      if (snake.vec !== Snake.RIGHT) snake.set_vec(Snake.LEFT);
     } else {
       console.log('Swipe RIGHT');
-      snake.set_vec(Snake.RIGHT);
+      if (snake.vec !== Snake.LEFT) snake.set_vec(Snake.RIGHT);
     }
   } else {
     if (yDiff > 0) {
       console.log('Swipe UP');
-      snake.set_vec(Snake.UP);
+      if (snake.vec !== Snake.DOWN) snake.set_vec(Snake.UP);
     } else {
       console.log('Swipe DOWN');
-      snake.set_vec(Snake.DOWN);
+      if (snake.vec !== Snake.UP) snake.set_vec(Snake.DOWN);
     }
   }
 
+  // Сбрасываем начальные координаты
   xDown = null;
   yDown = null;
 }
