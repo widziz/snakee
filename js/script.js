@@ -330,3 +330,8 @@ document.body.addEventListener(
   },
   { passive: false }
 );
+
+function handleTouchStart(evt) {
+  const firstTouch = evt.touches[0];
+  console.log('Touch Start:', firstTouch.clientX, firstTouch.clientY);
+}
