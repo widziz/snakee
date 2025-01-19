@@ -71,11 +71,32 @@
 <body>
 
 <script>
-  // Инициализация Telegram WebApp API
-  const app = window.Telegram.WebApp;
-  app.ready();
-  app.disableClosingConfirmation(); // Отключаем подтверждение закрытия (если включено)
-  app.disableVerticalSwipes(); // Отключаем вертикальные свайпы для предотвращения закрытия
+  // Проверяем доступность Telegram Web App API
+  if (window.Telegram && window.Telegram.WebApp) {
+    const app = window.Telegram.WebApp;
+
+    // Активируем API
+    app.ready();
+
+    // Отключаем свайпы вниз
+    if (app.disableVerticalSwipes) {
+      app.disableVerticalSwipes();
+    } else {
+      console.warn("Метод disableVerticalSwipes недоступен в текущей версии Telegram Web App API.");
+    }
+
+    // Включаем подтверждение перед закрытием
+    app.isClosingConfirmationEnabled = true;
+  } else {
+    console.error("Telegram Web App API недоступен. Проверьте настройки.");
+  }
+
+  // Предотвращение стандартных свайпов внутри игрового поля
+  document.body.addEventListener('touchmove', (e) => {
+    if (e.target.closest('#game-stage')) {
+      e.preventDefault();
+    }
+  }, { passive: false });
 </script>
 
     <div class="score">0</div>
