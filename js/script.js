@@ -256,7 +256,6 @@ window.addEventListener(
   true
 );
 
-// Swipe logic
 let xDown = null;
 let yDown = null;
 
@@ -264,6 +263,7 @@ function handleTouchStart(evt) {
   const firstTouch = evt.touches[0];
   xDown = firstTouch.clientX;
   yDown = firstTouch.clientY;
+  console.log('Touch Start:', xDown, yDown);
 }
 
 function handleTouchMove(evt) {
@@ -275,16 +275,40 @@ function handleTouchMove(evt) {
   const xDiff = xDown - xUp;
   const yDiff = yDown - yUp;
 
+  console.log('Swipe detected: xDiff:', xDiff, 'yDiff:', yDiff);
+
   if (Math.abs(xDiff) > Math.abs(yDiff)) {
-    if (xDiff > 0 && snake.vec !== Snake.RIGHT) snake.set_vec(Snake.LEFT);
-    else if (snake.vec !== Snake.LEFT) snake.set_vec(Snake.RIGHT);
+    if (xDiff > 0) {
+      console.log('Swipe LEFT');
+      snake.set_vec(Snake.LEFT);
+    } else {
+      console.log('Swipe RIGHT');
+      snake.set_vec(Snake.RIGHT);
+    }
   } else {
-    if (yDiff > 0 && snake.vec !== Snake.DOWN) snake.set_vec(Snake.UP);
-    else if (snake.vec !== Snake.UP) snake.set_vec(Snake.DOWN);
+    if (yDiff > 0) {
+      console.log('Swipe UP');
+      snake.set_vec(Snake.UP);
+    } else {
+      console.log('Swipe DOWN');
+      snake.set_vec(Snake.DOWN);
+    }
   }
+
   xDown = null;
   yDown = null;
 }
+
+const gameStage = document.getElementById('game_field');
+
+gameStage.addEventListener('touchstart', handleTouchStart, false);
+gameStage.addEventListener('touchmove', handleTouchMove, false);
+
+document.body.addEventListener('touchmove', (e) => {
+  if (e.target.closest('#game_field')) {
+    e.preventDefault();
+  }
+}, { passive: false });
 
 document.addEventListener('touchstart', handleTouchStart, false);
 document.addEventListener('touchmove', handleTouchMove, false);
