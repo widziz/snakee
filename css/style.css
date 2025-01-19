@@ -1,0 +1,45 @@
+#game_field {
+    background-color: rgb(37, 36, 36);
+}
+
+html,
+body {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+    touch-action: none;
+}
+/* Контейнер для кнопок управления */
+.controls {
+    position: fixed;
+    bottom: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10;
+  }
+  
+  /* Кнопка управления */
+  .control-btn {
+    background-color: #444;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    margin: 5px;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s ease;
+  }
+  
+  .control-btn:active {
+    background-color: #666;
+    box-shadow: none;
+  }
+  
+  .horizontal-controls {
+    display: flex;
+    justify-content: center;
+  }
