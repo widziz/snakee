@@ -259,12 +259,22 @@ window.addEventListener(
 let xDown = null;
 let yDown = null;
 
-// Инициализация обработчиков свайпов
-document.addEventListener('touchstart', handleTouchStart, false);
-document.addEventListener('touchmove', handleTouchMove, false);
+window.addEventListener('load', () => {
+  const gameStage = document.getElementById('game_field');
+
+  if (!gameStage) {
+    console.error('Game field not found');
+    return;
+  }
+
+  gameStage.addEventListener('touchstart', handleTouchStart, false);
+  gameStage.addEventListener('touchmove', handleTouchMove, false);
+
+  console.log('Swipe handlers attached to game field');
+});
 
 function handleTouchStart(evt) {
-  const firstTouch = evt.touches[0]; // Получаем первую точку касания
+  const firstTouch = evt.touches[0];
   xDown = firstTouch.clientX;
   yDown = firstTouch.clientY;
   console.log('Touch Start:', xDown, yDown);
@@ -272,6 +282,7 @@ function handleTouchStart(evt) {
 
 function handleTouchMove(evt) {
   if (!xDown || !yDown) {
+    console.log('No touch start coordinates');
     return;
   }
 
@@ -281,41 +292,30 @@ function handleTouchMove(evt) {
   const xDiff = xDown - xUp;
   const yDiff = yDown - yUp;
 
-  console.log('Swipe detected: xDiff:', xDiff, 'yDiff:', yDiff);
+  console.log('Swipe detected:', { xDiff, yDiff });
 
   if (Math.abs(xDiff) > Math.abs(yDiff)) {
     if (xDiff > 0) {
       console.log('Swipe LEFT');
-      if (snake.vec !== Snake.RIGHT) snake.set_vec(Snake.LEFT);
+      snake.set_vec(Snake.LEFT);
     } else {
       console.log('Swipe RIGHT');
-      if (snake.vec !== Snake.LEFT) snake.set_vec(Snake.RIGHT);
+      snake.set_vec(Snake.RIGHT);
     }
   } else {
     if (yDiff > 0) {
       console.log('Swipe UP');
-      if (snake.vec !== Snake.DOWN) snake.set_vec(Snake.UP);
+      snake.set_vec(Snake.UP);
     } else {
       console.log('Swipe DOWN');
-      if (snake.vec !== Snake.UP) snake.set_vec(Snake.DOWN);
+      snake.set_vec(Snake.DOWN);
     }
   }
 
-  // Сбрасываем начальные координаты
   xDown = null;
   yDown = null;
 }
 
-const gameStage = document.getElementById('game_field');
-
-gameStage.addEventListener('touchstart', handleTouchStart, false);
-gameStage.addEventListener('touchmove', handleTouchMove, false);
-
 document.body.addEventListener('touchmove', (e) => {
-  if (e.target.closest('#game_field')) {
-    e.preventDefault();
-  }
+  e.preventDefault();
 }, { passive: false });
-
-document.addEventListener('touchstart', handleTouchStart, false);
-document.addEventListener('touchmove', handleTouchMove, false);
