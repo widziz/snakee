@@ -1,3 +1,20 @@
+if (window.Telegram && window.Telegram.WebApp) {
+  const app = window.Telegram.WebApp;
+  app.ready();
+
+  // Отключаем вертикальные свайпы
+  if (app.disableVerticalSwipes) {
+    app.disableVerticalSwipes();
+  }
+
+  // Включаем подтверждение закрытия приложения
+  app.isClosingConfirmationEnabled = true;
+
+  console.log("Telegram Web App API initialized");
+} else {
+  console.warn("Telegram Web App API не доступен. Проверьте, запускается ли приложение внутри Telegram.");
+}
+
 class Position {
   constructor(x, y) {
     this.x = x;
