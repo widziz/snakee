@@ -1165,16 +1165,22 @@ console.log("Initialized snake and tiles:", g.currentState && g.currentState.sna
       const diffX = touchEndX - touchStartX;
       const diffY = touchEndY - touchStartY;
 
+      console.log("Swipe detected. diffX:", diffX, "diffY:", diffY);
+
       if (Math.abs(diffX) > Math.abs(diffY)) {
         if (diffX > 50) {
+          console.log("Swipe Right");
           document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
         } else if (diffX < -50) {
+          console.log("Swipe Left");
           document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft' }));
         }
       } else {
         if (diffY > 50) {
+          console.log("Swipe Down");
           document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
         } else if (diffY < -50) {
+          console.log("Swipe Up");
           document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp' }));
         }
       }
@@ -1184,14 +1190,17 @@ console.log("Initialized snake and tiles:", g.currentState && g.currentState.sna
     gameStage.addEventListener('touchstart', (e) => {
       touchStartX = e.touches[0].clientX;
       touchStartY = e.touches[0].clientY;
+      console.log("Touch Start:", touchStartX, touchStartY);
     });
 
     gameStage.addEventListener('touchmove', (e) => {
       touchEndX = e.touches[0].clientX;
       touchEndY = e.touches[0].clientY;
+      console.log("Touch Move:", touchEndX, touchEndY);
     });
 
     gameStage.addEventListener('touchend', () => {
+      console.log("Touch End:", touchEndX, touchEndY);
       handleSwipe();
     });
 
@@ -1215,6 +1224,11 @@ console.log("Initialized snake and tiles:", g.currentState && g.currentState.sna
         e.preventDefault();
       }
     }, { passive: false });
+
+    // Отладка нажатий клавиш
+    window.addEventListener('keydown', (e) => {
+      console.log("Key Pressed:", e.key);
+    });
   </script>
 </body>
 </html>
