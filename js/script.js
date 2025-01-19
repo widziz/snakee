@@ -259,20 +259,19 @@ window.addEventListener(
 let xDown = null;
 let yDown = null;
 
-// Подключаем обработчики свайпов после загрузки страницы
+// Инициализация обработчиков свайпов
 window.addEventListener('load', () => {
   const gameStage = document.getElementById('game_field');
 
   if (!gameStage) {
-    console.error('Игровое поле #game_field не найдено');
+    alert('Игровое поле #game_field не найдено');
     return;
   }
 
-  // Привязка событий touchstart и touchmove к игровому полю
-  gameStage.addEventListener('touchstart', handleTouchStart, false);
-  gameStage.addEventListener('touchmove', handleTouchMove, false);
+  gameStage.addEventListener('touchstart', handleTouchStart, { passive: false });
+  gameStage.addEventListener('touchmove', handleTouchMove, { passive: false });
 
-  console.log('Обработчики свайпов подключены к #game_field');
+  alert('Обработчики свайпов подключены!');
 });
 
 function handleTouchStart(evt) {
@@ -280,12 +279,13 @@ function handleTouchStart(evt) {
   xDown = firstTouch.clientX;
   yDown = firstTouch.clientY;
 
-  console.log('Начало касания:', { x: xDown, y: yDown });
+  // Подтверждение начала касания
+  alert(`Начало касания: x=${xDown}, y=${yDown}`);
 }
 
 function handleTouchMove(evt) {
   if (!xDown || !yDown) {
-    console.log('Координаты начала касания отсутствуют');
+    alert('Координаты начала касания отсутствуют');
     return;
   }
 
@@ -295,29 +295,26 @@ function handleTouchMove(evt) {
   const xDiff = xDown - xUp;
   const yDiff = yDown - yUp;
 
-  console.log('Свайп обнаружен:', { xDiff, yDiff });
-
+  // Логика определения направления свайпа
   if (Math.abs(xDiff) > Math.abs(yDiff)) {
-    // Горизонтальный свайп
     if (xDiff > 0) {
-      console.log('Свайп влево');
+      alert('Свайп влево');
       if (snake.vec !== Snake.RIGHT) snake.set_vec(Snake.LEFT);
     } else {
-      console.log('Свайп вправо');
+      alert('Свайп вправо');
       if (snake.vec !== Snake.LEFT) snake.set_vec(Snake.RIGHT);
     }
   } else {
-    // Вертикальный свайп
     if (yDiff > 0) {
-      console.log('Свайп вверх');
+      alert('Свайп вверх');
       if (snake.vec !== Snake.DOWN) snake.set_vec(Snake.UP);
     } else {
-      console.log('Свайп вниз');
+      alert('Свайп вниз');
       if (snake.vec !== Snake.UP) snake.set_vec(Snake.DOWN);
     }
   }
 
-  // Сбрасываем координаты
+  // Сбрасываем начальные координаты
   xDown = null;
   yDown = null;
 }
