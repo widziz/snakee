@@ -1139,3 +1139,82 @@ console.log("Initialized snake and tiles:", g.currentState && g.currentState.sna
   </script>
 </body>
 </html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snake Game</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="stage" id="game-stage"></div>
+
+  <script src="./script.js"></script>
+  <script>
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+
+    const gameStage = document.getElementById('game-stage');
+
+    // Функция для обработки свайпов
+    function handleSwipe() {
+      const diffX = touchEndX - touchStartX;
+      const diffY = touchEndY - touchStartY;
+
+      if (Math.abs(diffX) > Math.abs(diffY)) {
+        if (diffX > 50) {
+          document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
+        } else if (diffX < -50) {
+          document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft' }));
+        }
+      } else {
+        if (diffY > 50) {
+          document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+        } else if (diffY < -50) {
+          document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp' }));
+        }
+      }
+    }
+
+    // Обработчики событий для свайпов
+    gameStage.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    });
+
+    gameStage.addEventListener('touchmove', (e) => {
+      touchEndX = e.touches[0].clientX;
+      touchEndY = e.touches[0].clientY;
+    });
+
+    gameStage.addEventListener('touchend', () => {
+      handleSwipe();
+    });
+
+    // Проверяем доступность Telegram Web App API
+    if (window.Telegram && window.Telegram.WebApp) {
+      const app = window.Telegram.WebApp;
+      app.ready();
+
+      // Отключаем вертикальные свайпы и включаем подтверждение закрытия
+      if (app.disableVerticalSwipes) {
+        app.disableVerticalSwipes();
+      }
+      app.isClosingConfirmationEnabled = true;
+    } else {
+      console.warn("Telegram Web App API недоступен. Это нормально при тестировании в браузере.");
+    }
+
+    // Предотвращение закрытия приложения свайпами
+    document.body.addEventListener('touchmove', (e) => {
+      if (e.target.closest('#game-stage')) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+  </script>
+</body>
+</html>
