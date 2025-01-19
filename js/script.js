@@ -1,3 +1,9 @@
+if (window.Telegram && window.Telegram.WebApp) {
+  const app = window.Telegram.WebApp;
+  app.ready();
+  app.disableVerticalSwipes();
+}
+
 class Position {
   constructor(x, y) {
     this.x = x;
