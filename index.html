@@ -69,6 +69,15 @@
     </style>
 </head>
 <body>
+
+<script>
+  // Инициализация Telegram WebApp API
+  const app = window.Telegram.WebApp;
+  app.ready();
+  app.disableClosingConfirmation(); // Отключаем подтверждение закрытия (если включено)
+  app.disableVerticalSwipes(); // Отключаем вертикальные свайпы для предотвращения закрытия
+</script>
+
     <div class="score">0</div>
     <div class="stage"></div>
     <script>
@@ -1109,10 +1118,3 @@ console.log("Initialized snake and tiles:", g.currentState && g.currentState.sna
   </script>
 </body>
 </html>
-<script>
-  // Инициализация Telegram WebApp API
-  const app = window.Telegram.WebApp;
-  app.ready();
-  app.disableClosingConfirmation(); // Отключаем подтверждение закрытия (если включено)
-  app.disableVerticalSwipes(); // Отключаем вертикальные свайпы для предотвращения закрытия
-</script>
