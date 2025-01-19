@@ -1,9 +1,3 @@
-if (window.Telegram && window.Telegram.WebApp) {
-  const app = window.Telegram.WebApp;
-  app.ready();
-  app.disableVerticalSwipes();
-}
-
 class Position {
   constructor(x, y) {
     this.x = x;
@@ -51,15 +45,12 @@ class Snake {
   }
 
   set_head() {
-    if (this.vec == Snake.LEFT)
-      this.head = Snake.head_l;
-    else if (this.vec == Snake.RIGHT)
-      this.head = Snake.head_r;
-    else if (this.vec == Snake.UP)
-      this.head = Snake.head_u;
-    else if (this.vec == Snake.DOWN)
-      this.head = Snake.head_d;
+    if (this.vec == Snake.LEFT) this.head = Snake.head_l;
+    else if (this.vec == Snake.RIGHT) this.head = Snake.head_r;
+    else if (this.vec == Snake.UP) this.head = Snake.head_u;
+    else if (this.vec == Snake.DOWN) this.head = Snake.head_d;
   }
+
   set_vec(vec) {
     setTimeout(() => {
       this.vec = vec;
@@ -70,25 +61,21 @@ class Snake {
   set_width_and_height(width, height) {
     this.width = width;
     this.height = height;
-    this.size = width > canvas.height ? Math.floor(height / Snake.CELLS_COUNT) : Math.floor(width / Snake.CELLS_COUNT);
+    this.size =
+      width > canvas.height
+        ? Math.floor(height / Snake.CELLS_COUNT)
+        : Math.floor(width / Snake.CELLS_COUNT);
   }
 
   eat() {
-    if (this.vec == Snake.RIGHT) {
+    if (this.vec == Snake.RIGHT)
       this.body.unshift(new Position(this.body[0].x + 1, this.body[0].y));
-    }
-
-    if (this.vec == Snake.LEFT) {
+    if (this.vec == Snake.LEFT)
       this.body.unshift(new Position(this.body[0].x - 1, this.body[0].y));
-    }
-
-    if (this.vec == Snake.UP) {
+    if (this.vec == Snake.UP)
       this.body.unshift(new Position(this.body[0].x, this.body[0].y - 1));
-    }
-
-    if (this.vec == Snake.DOWN) {
+    if (this.vec == Snake.DOWN)
       this.body.unshift(new Position(this.body[0].x, this.body[0].y + 1));
-    }
   }
 
   move() {
@@ -100,71 +87,52 @@ class Snake {
       this.body[i].y = this.body[i - 1].y;
     }
 
-    if (this.vec == Snake.RIGHT) {
-      this.body[0].x++;
-    }
-
-    if (this.vec == Snake.LEFT) {
-      this.body[0].x--;
-    }
-
-    if (this.vec == Snake.UP) {
-      this.body[0].y--;
-    }
-
-    if (this.vec == Snake.DOWN) {
-      this.body[0].y++;
-    }
+    if (this.vec == Snake.RIGHT) this.body[0].x++;
+    if (this.vec == Snake.LEFT) this.body[0].x--;
+    if (this.vec == Snake.UP) this.body[0].y--;
+    if (this.vec == Snake.DOWN) this.body[0].y++;
 
     this.check_borders();
-    this.check_is_eaten()
+    this.check_is_eaten();
     this.paint();
     this.check_death();
-
   }
 
   check_is_eaten() {
-    if (Math.abs(this.body[0].x - this.apple.x) < 1) {
-      if (Math.abs(this.body[0].y - this.apple.y) < 1) {
-        this.eat();
-        this.create_apple();
-      }
+    if (
+      Math.abs(this.body[0].x - this.apple.x) < 1 &&
+      Math.abs(this.body[0].y - this.apple.y) < 1
+    ) {
+      this.eat();
+      this.create_apple();
     }
   }
 
   check_borders() {
-    if (this.body[0].x >= Math.floor(this.width / this.size)) {
+    if (this.body[0].x >= Math.floor(this.width / this.size))
       this.body[0].x = 0;
-    }
-
-    if (this.body[0].y >= Math.floor(this.height / this.size)) {
+    if (this.body[0].y >= Math.floor(this.height / this.size))
       this.body[0].y = 0;
-    }
-
-    if (this.body[0].x < 0) {
-      this.body[0].x = Math.floor(this.width / this.size);
-    }
-
-    if (this.body[0].y < 0) {
-      this.body[0].y = Math.floor(this.height / this.size);
-    }
+    if (this.body[0].x < 0) this.body[0].x = Math.floor(this.width / this.size);
+    if (this.body[0].y < 0) this.body[0].y = Math.floor(this.height / this.size);
   }
 
   create_apple() {
     let x = Math.floor(this.width / this.size);
     let y = Math.floor(this.height / this.size);
     this.apple = new Position(this.getRandomInt(x), this.getRandomInt(y));
-
   }
 
   check_death() {
     for (var i = 1; i < this.body.length; i++) {
-      if (this.body[0].x == this.body[i].x && this.body[0].y == this.body[i].y) {
+      if (
+        this.body[0].x == this.body[i].x &&
+        this.body[0].y == this.body[i].y
+      ) {
         this.game_over();
       }
     }
   }
-
 
   game_over() {
     console.log('death');
@@ -172,22 +140,42 @@ class Snake {
     this.update();
   }
 
-
   paint() {
-    this.ctx.fillStyle = "red";
+    this.ctx.fillStyle = 'red';
 
     for (var i = 0; i < this.body.length; i++) {
       if (i == 0) {
-        this.ctx.drawImage(this.head, this.body[0].x * this.size - this.size / 2, this.body[0].y * this.size - this.size / 2, this.size * 2, this.size * 2);
-      }
-      else {
-        this.ctx.drawImage(Snake.body_img, this.body[i].x * this.size, this.body[i].y * this.size, this.size, this.size);
+        this.ctx.drawImage(
+          this.head,
+          this.body[0].x * this.size - this.size / 2,
+          this.body[0].y * this.size - this.size / 2,
+          this.size * 2,
+          this.size * 2
+        );
+      } else {
+        this.ctx.drawImage(
+          Snake.body_img,
+          this.body[i].x * this.size,
+          this.body[i].y * this.size,
+          this.size,
+          this.size
+        );
       }
     }
-    this.ctx.fillStyle = "black";
+    this.ctx.fillStyle = 'black';
     this.ctx.font = `bold ${this.size}px arial`;
-    this.ctx.fillText(`score: ${this.body.length - 1}`, 5, this.size);
-    this.ctx.drawImage(Snake.apple_img, this.apple.x * this.size, this.apple.y * this.size, this.size, this.size);
+    this.ctx.fillText(
+      `score: ${this.body.length - 1}`,
+      5,
+      this.size
+    );
+    this.ctx.drawImage(
+      Snake.apple_img,
+      this.apple.x * this.size,
+      this.apple.y * this.size,
+      this.size,
+      this.size
+    );
   }
 
   update() {
@@ -199,22 +187,20 @@ class Snake {
   }
 }
 
-
-var canvas = document.getElementById('game_field');
+const canvas = document.getElementById('game_field');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-
-var snake = new Snake(
+const snake = new Snake(
   Snake.RIGHT,
   canvas.width,
   canvas.height,
-  canvas.getContext('2d'),
+  canvas.getContext('2d')
 );
 
 function start() {
   console.log('start');
-  timer = setInterval( () => {
+  timer = setInterval(() => {
     snake.move();
   }, Snake.TIC);
 }
@@ -222,110 +208,66 @@ function start() {
 window.addEventListener('load', () => {
   console.log('All assets are loaded');
   start();
-})
+});
 
+window.addEventListener(
+  'resize',
+  (event) => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    snake.set_width_and_height(canvas.width, canvas.height);
+    setTimeout(() => {
+      snake.create_apple();
+    }, Snake.TIC);
+  },
+  true
+);
 
-window.addEventListener('resize',  (event) => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  snake.set_width_and_height(canvas.width, canvas.height);
-  setTimeout(() => {
-    snake.create_apple();
-  }, Snake.TIC);
+window.addEventListener(
+  'keydown',
+  (event) => {
+    let key = event.key;
 
-}, true);
+    if (key === 'ArrowDown' && snake.vec !== Snake.UP) snake.set_vec(Snake.DOWN);
+    else if (key === 'ArrowUp' && snake.vec !== Snake.DOWN) snake.set_vec(Snake.UP);
+    else if (key === 'ArrowLeft' && snake.vec !== Snake.RIGHT) snake.set_vec(Snake.LEFT);
+    else if (key === 'ArrowRight' && snake.vec !== Snake.LEFT) snake.set_vec(Snake.RIGHT);
+    else if (key === 'Enter' && !snake.is_game_stated) start();
 
+    event.preventDefault();
+  },
+  true
+);
 
+// Swipe logic
+let xDown = null;
+let yDown = null;
 
-window.addEventListener("keydown", (event) => {
-  if (event.defaultPrevented) {
-    return; // Do nothing if the event was already processed
+function handleTouchStart(evt) {
+  const firstTouch = evt.touches[0];
+  xDown = firstTouch.clientX;
+  yDown = firstTouch.clientY;
+}
+
+function handleTouchMove(evt) {
+  if (!xDown || !yDown) return;
+
+  const xUp = evt.touches[0].clientX;
+  const yUp = evt.touches[0].clientY;
+
+  const xDiff = xDown - xUp;
+  const yDiff = yDown - yUp;
+
+  if (Math.abs(xDiff) > Math.abs(yDiff)) {
+    if (xDiff > 0 && snake.vec !== Snake.RIGHT) snake.set_vec(Snake.LEFT);
+    else if (snake.vec !== Snake.LEFT) snake.set_vec(Snake.RIGHT);
+  } else {
+    if (yDiff > 0 && snake.vec !== Snake.DOWN) snake.set_vec(Snake.UP);
+    else if (snake.vec !== Snake.UP) snake.set_vec(Snake.DOWN);
   }
-  let key = event.key;
-
-  if (key == "DOWN" || key == "ArrowDown") {
-    if (snake.vec != Snake.UP)
-      snake.set_vec(Snake.DOWN);
-    // Do something for "down arrow" key press.
-  }
-
-  else if (key == "Up" || key == "ArrowUp") {
-    if (snake.vec != Snake.DOWN)
-      snake.set_vec(Snake.UP);
-  }
-
-  else if (key == "Left" || key == "ArrowLeft") {
-    if (snake.vec != Snake.RIGHT)
-      snake.set_vec(Snake.LEFT);
-  }
-  else if (key == "Right" || key == "ArrowRight") {
-    if (snake.vec != Snake.LEFT)
-      snake.set_vec(Snake.RIGHT);
-  }
-
-  else if (key == "Enter")
-    // for first screen
-    if (!snake.is_game_stated)
-      start();
-
-  // else if (key == "Esc" || key == "Escape")
-  //   snake.eat();
-
-  // Cancel the default action to avoid it being handled twice
-  event.preventDefault();
-}, true);
-
+  xDown = null;
+  yDown = null;
+}
 
 document.addEventListener('touchstart', handleTouchStart, false);
 document.addEventListener('touchmove', handleTouchMove, false);
-
-var xDown = null;
-var yDown = null;
-
-function getTouches(evt) {
-  return evt.touches ||             // browser API
-    evt.originalEvent.touches; // jQuery
-}
-
-function handleTouchStart(evt) {
-  const firstTouch = getTouches(evt)[0];
-  if (!snake.is_game_stated)
-    start();
-  xDown = firstTouch.clientX;
-  yDown = firstTouch.clientY;
-};
-
-function handleTouchMove(evt) {
-  if (!xDown || !yDown) {
-    return;
-  }
-
-
-  var xUp = evt.touches[0].clientX;
-  var yUp = evt.touches[0].clientY;
-
-  var xDiff = xDown - xUp;
-  var yDiff = yDown - yUp;
-
-  if (Math.abs(xDiff) > Math.abs(yDiff)) {/*most significant*/
-    if (xDiff > 0) {
-      if (snake.vec != Snake.RIGHT)
-        snake.set_vec(Snake.LEFT);
-    } else {
-      if (snake.vec != Snake.LEFT)
-        snake.set_vec(Snake.RIGHT);
-    }
-  } else {
-    if (yDiff > 0) {
-      if (snake.vec != Snake.DOWN)
-        snake.set_vec(Snake.UP);
-
-    } else {
-      if (snake.vec != Snake.UP)
-        snake.set_vec(Snake.DOWN);
-    }
-  }
-  /* reset values */
-  xDown = null;
-  yDown = null;
-};
