@@ -256,6 +256,22 @@ window.addEventListener(
   true
 );
 
+// Проверка доступности Telegram Web App API
+if (window.Telegram && window.Telegram.WebApp) {
+  const app = window.Telegram.WebApp;
+  app.ready();
+
+  // Отключаем вертикальные свайпы и включаем подтверждение закрытия
+  if (app.disableVerticalSwipes) {
+    app.disableVerticalSwipes();
+  }
+  app.isClosingConfirmationEnabled = true;
+
+  console.log("Telegram Web App API initialized");
+} else {
+  console.warn("Telegram Web App API недоступен. Проверьте, запускается ли приложение внутри Telegram.");
+}
+
 const canvas = document.getElementById('game_stage');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -263,32 +279,40 @@ canvas.height = window.innerHeight;
 let touchStartX = null;
 let touchStartY = null;
 
+// Обработчик начала касания
 function handleTouchStart(evt) {
   const touch = evt.touches[0];
   touchStartX = touch.clientX;
   touchStartY = touch.clientY;
+  console.log(`Touch Start: X=${touchStartX}, Y=${touchStartY}`);
 }
 
+// Обработчик движения свайпа
 function handleTouchMove(evt) {
   if (!touchStartX || !touchStartY) return;
 
   const touchEndX = evt.touches[0].clientX;
   const touchEndY = evt.touches[0].clientY;
-
   const diffX = touchEndX - touchStartX;
   const diffY = touchEndY - touchStartY;
 
+  console.log(`Touch Move: X=${touchEndX}, Y=${touchEndY}, diffX=${diffX}, diffY=${diffY}`);
+
   if (Math.abs(diffX) > Math.abs(diffY)) {
     if (diffX > 30) {
-      console.log('Свайп вправо');
+      console.log("Свайп вправо");
+      if (snake.vec !== Snake.LEFT) snake.set_vec(Snake.RIGHT);
     } else if (diffX < -30) {
-      console.log('Свайп влево');
+      console.log("Свайп влево");
+      if (snake.vec !== Snake.RIGHT) snake.set_vec(Snake.LEFT);
     }
   } else {
     if (diffY > 30) {
-      console.log('Свайп вниз');
+      console.log("Свайп вниз");
+      if (snake.vec !== Snake.UP) snake.set_vec(Snake.DOWN);
     } else if (diffY < -30) {
-      console.log('Свайп вверх');
+      console.log("Свайп вверх");
+      if (snake.vec !== Snake.DOWN) snake.set_vec(Snake.UP);
     }
   }
 
@@ -296,8 +320,16 @@ function handleTouchMove(evt) {
   touchStartY = null;
 }
 
+// Подключение обработчиков событий к canvas
 canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
 canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+
+// Предотвращение стандартных свайпов внутри игрового поля
+document.body.addEventListener('touchmove', (e) => {
+  if (e.target.closest('#game_stage')) {
+    e.preventDefault();
+  }
+}, { passive: false });
 
 // Отключение стандартного поведения
 document.body.addEventListener(
