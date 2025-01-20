@@ -204,7 +204,7 @@ class Snake {
   }
 }
 
-const canvas = document.getElementById('game_field');
+const canvas = document.getElementById('game_stage');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
@@ -303,7 +303,7 @@ canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
 document.body.addEventListener(
   'touchmove',
   (e) => {
-    if (e.target.closest('#game_field')) {
+    if (e.target.closest('#game_stage')) {
       e.preventDefault();
     }
   },
