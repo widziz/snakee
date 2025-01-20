@@ -256,79 +256,48 @@ window.addEventListener(
   true
 );
 
+const canvas = document.getElementById('game_stage');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
 let touchStartX = null;
 let touchStartY = null;
-const SENSITIVITY = 30; // Минимальное расстояние, чтобы считать жест свайпом
 
-// Функция инициализации событий
-function initializeSwipeControls() {
-  const gameField = document.getElementById('game_field');
-
-  if (!gameField) {
-    console.error('Игровое поле #game_field не найдено');
-    return;
-  }
-
-  gameField.addEventListener('touchstart', handleTouchStart, { passive: false });
-  gameField.addEventListener('touchmove', handleTouchMove, { passive: false });
-  console.log('События свайпов подключены к #game_field');
-}
-
-// Обработчик начала касания
 function handleTouchStart(evt) {
   const touch = evt.touches[0];
   touchStartX = touch.clientX;
   touchStartY = touch.clientY;
-
-  console.log(`Touch started at: X=${touchStartX}, Y=${touchStartY}`);
 }
 
-// Обработчик движения касания
 function handleTouchMove(evt) {
-  if (!touchStartX || !touchStartY) {
-    return;
-  }
+  if (!touchStartX || !touchStartY) return;
 
-  const touch = evt.touches[0];
-  const touchEndX = touch.clientX;
-  const touchEndY = touch.clientY;
+  const touchEndX = evt.touches[0].clientX;
+  const touchEndY = evt.touches[0].clientY;
 
   const diffX = touchEndX - touchStartX;
   const diffY = touchEndY - touchStartY;
 
-  // Проверяем, достаточно ли движения для свайпа
   if (Math.abs(diffX) > Math.abs(diffY)) {
-    // Горизонтальный свайп
-    if (Math.abs(diffX) > SENSITIVITY) {
-      if (diffX > 0) {
-        console.log('Свайп вправо');
-        if (snake.vec !== Snake.LEFT) snake.set_vec(Snake.RIGHT);
-      } else {
-        console.log('Свайп влево');
-        if (snake.vec !== Snake.RIGHT) snake.set_vec(Snake.LEFT);
-      }
-      resetTouchCoordinates();
+    if (diffX > 30) {
+      console.log('Свайп вправо');
+    } else if (diffX < -30) {
+      console.log('Свайп влево');
     }
   } else {
-    // Вертикальный свайп
-    if (Math.abs(diffY) > SENSITIVITY) {
-      if (diffY > 0) {
-        console.log('Свайп вниз');
-        if (snake.vec !== Snake.UP) snake.set_vec(Snake.DOWN);
-      } else {
-        console.log('Свайп вверх');
-        if (snake.vec !== Snake.DOWN) snake.set_vec(Snake.UP);
-      }
-      resetTouchCoordinates();
+    if (diffY > 30) {
+      console.log('Свайп вниз');
+    } else if (diffY < -30) {
+      console.log('Свайп вверх');
     }
   }
-}
 
-// Сбрасываем координаты после обработки свайпа
-function resetTouchCoordinates() {
   touchStartX = null;
   touchStartY = null;
 }
+
+canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
 
 // Отключение стандартного поведения
 document.body.addEventListener(
