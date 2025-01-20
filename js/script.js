@@ -256,68 +256,96 @@ window.addEventListener(
   true
 );
 
-let xDown = null;
-let yDown = null;
+let touchStartX = null;
+let touchStartY = null;
+const SENSITIVITY = 30; // Минимальное расстояние, чтобы считать жест свайпом
 
-// Инициализация обработчиков свайпов
-window.addEventListener('load', () => {
-  const gameStage = document.getElementById('game_field');
+// Функция инициализации событий
+function initializeSwipeControls() {
+  const gameField = document.getElementById('game_field');
 
-  if (!gameStage) {
-    alert('Игровое поле #game_field не найдено');
+  if (!gameField) {
+    console.error('Игровое поле #game_field не найдено');
     return;
   }
 
-  gameStage.addEventListener('touchstart', handleTouchStart, { passive: false });
-  gameStage.addEventListener('touchmove', handleTouchMove, { passive: false });
-
-  alert('Обработчики свайпов подключены!');
-});
-
-function handleTouchStart(evt) {
-  const firstTouch = evt.touches[0]; // Получаем первую точку касания
-  xDown = firstTouch.clientX;
-  yDown = firstTouch.clientY;
-
-  // Подтверждение начала касания
-  alert(`Начало касания: x=${xDown}, y=${yDown}`);
+  gameField.addEventListener('touchstart', handleTouchStart, { passive: false });
+  gameField.addEventListener('touchmove', handleTouchMove, { passive: false });
+  console.log('События свайпов подключены к #game_field');
 }
 
+// Обработчик начала касания
+function handleTouchStart(evt) {
+  const touch = evt.touches[0];
+  touchStartX = touch.clientX;
+  touchStartY = touch.clientY;
+
+  console.log(`Touch started at: X=${touchStartX}, Y=${touchStartY}`);
+}
+
+// Обработчик движения касания
 function handleTouchMove(evt) {
-  if (!xDown || !yDown) {
-    alert('Координаты начала касания отсутствуют');
+  if (!touchStartX || !touchStartY) {
     return;
   }
 
-  const xUp = evt.touches[0].clientX;
-  const yUp = evt.touches[0].clientY;
+  const touch = evt.touches[0];
+  const touchEndX = touch.clientX;
+  const touchEndY = touch.clientY;
 
-  const xDiff = xDown - xUp;
-  const yDiff = yDown - yUp;
+  const diffX = touchEndX - touchStartX;
+  const diffY = touchEndY - touchStartY;
 
-  // Логика определения направления свайпа
-  if (Math.abs(xDiff) > Math.abs(yDiff)) {
-    if (xDiff > 0) {
-      alert('Свайп влево');
-      if (snake.vec !== Snake.RIGHT) snake.set_vec(Snake.LEFT);
-    } else {
-      alert('Свайп вправо');
-      if (snake.vec !== Snake.LEFT) snake.set_vec(Snake.RIGHT);
+  // Проверяем, достаточно ли движения для свайпа
+  if (Math.abs(diffX) > Math.abs(diffY)) {
+    // Горизонтальный свайп
+    if (Math.abs(diffX) > SENSITIVITY) {
+      if (diffX > 0) {
+        console.log('Свайп вправо');
+        if (snake.vec !== Snake.LEFT) snake.set_vec(Snake.RIGHT);
+      } else {
+        console.log('Свайп влево');
+        if (snake.vec !== Snake.RIGHT) snake.set_vec(Snake.LEFT);
+      }
+      resetTouchCoordinates();
     }
   } else {
-    if (yDiff > 0) {
-      alert('Свайп вверх');
-      if (snake.vec !== Snake.DOWN) snake.set_vec(Snake.UP);
-    } else {
-      alert('Свайп вниз');
-      if (snake.vec !== Snake.UP) snake.set_vec(Snake.DOWN);
+    // Вертикальный свайп
+    if (Math.abs(diffY) > SENSITIVITY) {
+      if (diffY > 0) {
+        console.log('Свайп вниз');
+        if (snake.vec !== Snake.UP) snake.set_vec(Snake.DOWN);
+      } else {
+        console.log('Свайп вверх');
+        if (snake.vec !== Snake.DOWN) snake.set_vec(Snake.UP);
+      }
+      resetTouchCoordinates();
     }
   }
-
-  // Сбрасываем начальные координаты
-  xDown = null;
-  yDown = null;
 }
+
+// Сбрасываем координаты после обработки свайпа
+function resetTouchCoordinates() {
+  touchStartX = null;
+  touchStartY = null;
+}
+
+// Отключение стандартного поведения
+document.body.addEventListener(
+  'touchmove',
+  (e) => {
+    if (e.target.closest('#game_field')) {
+      e.preventDefault();
+    }
+  },
+  { passive: false }
+);
+
+// Инициализация свайп-управления
+window.addEventListener('load', () => {
+  console.log('Страница загружена, подключаем управление свайпами');
+  initializeSwipeControls();
+});
 
 // Предотвращаем стандартное поведение для touchmove
 document.body.addEventListener(
