@@ -269,7 +269,7 @@ window.addEventListener('keydown', (event) => {
   event.preventDefault();
 });
 
-// Управление свайпами
+// Управление свайпами (мобильные устройства)
 let touchStartX = null;
 let touchStartY = null;
 
@@ -287,6 +287,37 @@ function handleTouchMove(evt) {
   const diffX = touchEndX - touchStartX;
   const diffY = touchEndY - touchStartY;
 
+  detectSwipe(diffX, diffY);
+
+  touchStartX = null;
+  touchStartY = null;
+}
+
+// Управление мышью (компьютеры)
+let mouseStartX = null;
+let mouseStartY = null;
+
+function handleMouseDown(evt) {
+  mouseStartX = evt.clientX;
+  mouseStartY = evt.clientY;
+}
+
+function handleMouseUp(evt) {
+  if (!mouseStartX || !mouseStartY) return;
+
+  const mouseEndX = evt.clientX;
+  const mouseEndY = evt.clientY;
+  const diffX = mouseEndX - mouseStartX;
+  const diffY = mouseEndY - mouseStartY;
+
+  detectSwipe(diffX, diffY);
+
+  mouseStartX = null;
+  mouseStartY = null;
+}
+
+// Общая логика для обработки свайпов
+function detectSwipe(diffX, diffY) {
   if (Math.abs(diffX) > Math.abs(diffY)) {
     if (diffX > 30) {
       console.log("Свайп вправо");
@@ -304,14 +335,13 @@ function handleTouchMove(evt) {
       if (snake.vec !== Snake.DOWN) snake.set_vec(Snake.UP);
     }
   }
-
-  touchStartX = null;
-  touchStartY = null;
 }
 
-// Привязка событий для свайпов
+// Привязка событий
 canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
 canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+canvas.addEventListener('mousedown', handleMouseDown, false);
+canvas.addEventListener('mouseup', handleMouseUp, false);
 
 // Предотвращение прокрутки на мобильных устройствах
 document.body.addEventListener(
