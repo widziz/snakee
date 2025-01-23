@@ -22,6 +22,18 @@ class Position {
   }
 }
 
+function clearCanvas() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+function gameLoop() {
+  clearCanvas(); // Очистка холста перед отрисовкой
+  snake.move();  // Обновление состояния змеи
+  snake.draw();  // Отрисовка змеи
+  // ... другие операции
+}
+// Запуск игрового цикла
+const gameInterval = setInterval(gameLoop, Snake.TIC);
+
 class Snake {
   static LEFT = -1;
   static RIGHT = 1;
