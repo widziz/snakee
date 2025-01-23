@@ -204,58 +204,6 @@ class Snake {
   }
 }
 
-const canvas = document.getElementById('game_stage');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-const snake = new Snake(
-  Snake.RIGHT,
-  canvas.width,
-  canvas.height,
-  canvas.getContext('2d')
-);
-
-function start() {
-  console.log('start');
-  timer = setInterval(() => {
-    snake.move();
-  }, Snake.TIC);
-}
-
-window.addEventListener('load', () => {
-  console.log('All assets are loaded');
-  start();
-});
-
-window.addEventListener(
-  'resize',
-  (event) => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    snake.set_width_and_height(canvas.width, canvas.height);
-    setTimeout(() => {
-      snake.create_apple();
-    }, Snake.TIC);
-  },
-  true
-);
-
-window.addEventListener(
-  'keydown',
-  (event) => {
-    let key = event.key;
-
-    if (key === 'ArrowDown' && snake.vec !== Snake.UP) snake.set_vec(Snake.DOWN);
-    else if (key === 'ArrowUp' && snake.vec !== Snake.DOWN) snake.set_vec(Snake.UP);
-    else if (key === 'ArrowLeft' && snake.vec !== Snake.RIGHT) snake.set_vec(Snake.LEFT);
-    else if (key === 'ArrowRight' && snake.vec !== Snake.LEFT) snake.set_vec(Snake.RIGHT);
-    else if (key === 'Enter' && !snake.is_game_stated) start();
-
-    event.preventDefault();
-  },
-  true
-);
-
 // Проверка доступности Telegram Web App API
 if (window.Telegram && window.Telegram.WebApp) {
   const app = window.Telegram.WebApp;
@@ -272,22 +220,65 @@ if (window.Telegram && window.Telegram.WebApp) {
   console.warn("Telegram Web App API недоступен. Проверьте, запускается ли приложение внутри Telegram.");
 }
 
+// Настройка canvas
 const canvas = document.getElementById('game_stage');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+// Инициализация змейки
+const snake = new Snake(
+  Snake.RIGHT,
+  canvas.width,
+  canvas.height,
+  canvas.getContext('2d')
+);
+
+function start() {
+  console.log('Игра началась');
+  timer = setInterval(() => {
+    snake.move();
+  }, Snake.TIC);
+}
+
+// Запуск игры после загрузки страницы
+window.addEventListener('load', () => {
+  console.log('Страница загружена, начинаем игру');
+  start();
+});
+
+// Обновление размеров canvas при изменении окна
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  snake.set_width_and_height(canvas.width, canvas.height);
+  setTimeout(() => {
+    snake.create_apple();
+  }, Snake.TIC);
+});
+
+// Управление с клавиатуры
+window.addEventListener('keydown', (event) => {
+  let key = event.key;
+
+  if (key === 'ArrowDown' && snake.vec !== Snake.UP) snake.set_vec(Snake.DOWN);
+  else if (key === 'ArrowUp' && snake.vec !== Snake.DOWN) snake.set_vec(Snake.UP);
+  else if (key === 'ArrowLeft' && snake.vec !== Snake.RIGHT) snake.set_vec(Snake.LEFT);
+  else if (key === 'ArrowRight' && snake.vec !== Snake.LEFT) snake.set_vec(Snake.RIGHT);
+  else if (key === 'Enter' && !snake.is_game_stated) start();
+
+  event.preventDefault();
+});
+
+// Управление свайпами
 let touchStartX = null;
 let touchStartY = null;
 
-// Обработчик начала касания
 function handleTouchStart(evt) {
   const touch = evt.touches[0];
   touchStartX = touch.clientX;
   touchStartY = touch.clientY;
-  console.log(`Touch Start: X=${touchStartX}, Y=${touchStartY}`);
 }
 
-// Обработчик движения свайпа
 function handleTouchMove(evt) {
   if (!touchStartX || !touchStartY) return;
 
@@ -295,8 +286,6 @@ function handleTouchMove(evt) {
   const touchEndY = evt.touches[0].clientY;
   const diffX = touchEndX - touchStartX;
   const diffY = touchEndY - touchStartY;
-
-  console.log(`Touch Move: X=${touchEndX}, Y=${touchEndY}, diffX=${diffX}, diffY=${diffY}`);
 
   if (Math.abs(diffX) > Math.abs(diffY)) {
     if (diffX > 30) {
@@ -320,18 +309,11 @@ function handleTouchMove(evt) {
   touchStartY = null;
 }
 
-// Подключение обработчиков событий к canvas
+// Привязка событий для свайпов
 canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
 canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
 
-// Предотвращение стандартных свайпов внутри игрового поля
-document.body.addEventListener('touchmove', (e) => {
-  if (e.target.closest('#game_stage')) {
-    e.preventDefault();
-  }
-}, { passive: false });
-
-// Отключение стандартного поведения
+// Предотвращение прокрутки на мобильных устройствах
 document.body.addEventListener(
   'touchmove',
   (e) => {
@@ -341,23 +323,3 @@ document.body.addEventListener(
   },
   { passive: false }
 );
-
-// Инициализация свайп-управления
-window.addEventListener('load', () => {
-  console.log('Страница загружена, подключаем управление свайпами');
-  initializeSwipeControls();
-});
-
-// Предотвращаем стандартное поведение для touchmove
-document.body.addEventListener(
-  'touchmove',
-  (e) => {
-    e.preventDefault();
-  },
-  { passive: false }
-);
-
-function handleTouchStart(evt) {
-  const firstTouch = evt.touches[0];
-  console.log('Touch Start:', firstTouch.clientX, firstTouch.clientY);
-}
