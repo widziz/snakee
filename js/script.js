@@ -204,35 +204,40 @@ class Snake {
   }
 }
 
-// Получаем элемент canvas
+// Получаем canvas и инициализируем Hammer.js
 const canvas = document.getElementById('game_stage');
 const ctx = canvas.getContext('2d');
+const hammer = new Hammer(canvas);
 
 // Устанавливаем размеры canvas
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-// Инициализируем Hammer.js на элементе canvas
-const hammer = new Hammer(canvas);
+// Настраиваем Hammer.js для распознавания свайпов
+hammer.get('swipe').set({ direction: Hammer.DIRECTION_ALL, velocity: 0.3 });
 
-// Настраиваем распознавание свайпов
-hammer.get('swipe').set({ direction: Hammer.DIRECTION_ALL });
-
-// Обработчики событий свайпов
-hammer.on('swipeleft', () => {
-  if (snake.vec !== Snake.RIGHT) snake.set_vec(Snake.LEFT);
-});
-
-hammer.on('swiperight', () => {
-  if (snake.vec !== Snake.LEFT) snake.set_vec(Snake.RIGHT);
-});
-
-hammer.on('swipeup', () => {
-  if (snake.vec !== Snake.DOWN) snake.set_vec(Snake.UP);
-});
-
-hammer.on('swipedown', () => {
-  if (snake.vec !== Snake.UP) snake.set_vec(Snake.DOWN);
+// События свайпов
+hammer.on('swipe', (ev) => {
+  switch (ev.direction) {
+    case Hammer.DIRECTION_LEFT:
+      console.log('Свайп влево');
+      if (snake.vec !== Snake.RIGHT) snake.set_vec(Snake.LEFT);
+      break;
+    case Hammer.DIRECTION_RIGHT:
+      console.log('Свайп вправо');
+      if (snake.vec !== Snake.LEFT) snake.set_vec(Snake.RIGHT);
+      break;
+    case Hammer.DIRECTION_UP:
+      console.log('Свайп вверх');
+      if (snake.vec !== Snake.DOWN) snake.set_vec(Snake.UP);
+      break;
+    case Hammer.DIRECTION_DOWN:
+      console.log('Свайп вниз');
+      if (snake.vec !== Snake.UP) snake.set_vec(Snake.DOWN);
+      break;
+    default:
+      console.log('Неизвестное направление свайпа');
+  }
 });
 
 // Функция для запуска игры
